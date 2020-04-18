@@ -9,12 +9,12 @@ This repository builds a learning path to Data Science and Machine Learning. It 
 
 ## Project Contents
 
-The content is created in a way to help beginners enter into the Data World.
 A prior knowledge of Python as programming language is expected to proceed with this learning. 
 If not, then visit
 - [MyPythonRepo](https://github.com/THEbombCoC/PythonAtWork)
 - [Python.org](https://www.python.org/)
 
+Since this is a learning phase for me in Data Science, all the contents are build with **Concepts**, **Examples** and **Problem Solving Exercises**.
 The contents touched upon are:
 - NumPy, for Numerical Computation and Analysis
 - Pandas, for Data extraction and Preparation
