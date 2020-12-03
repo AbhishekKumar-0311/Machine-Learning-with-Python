@@ -1,4 +1,4 @@
-# DataScienceAtWork [WiP]
+# Machine Learning with Python [WiP]
 
 This repository builds a learning path to Data Science and Machine Learning. It primarily focusses on the below tasks which forms the base of any Data Science and Machine Learning project.
 - Gathering or Extracting the data
