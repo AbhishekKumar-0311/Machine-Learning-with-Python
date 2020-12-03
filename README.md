@@ -63,6 +63,5 @@ All the required datasets are available at [Data Repository](https://github.com/
 
 ##### Notification
 ```
-This is a Work in Progress. It's expected to be completed by 2020.
-Stay tuned for improvements and collaboration.
+This will always be a Work in Progress.
 ```
