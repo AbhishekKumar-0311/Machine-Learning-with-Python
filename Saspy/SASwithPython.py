@@ -14,9 +14,9 @@
 #     name: python3
 # ---
 
-# # Heart Disease Classification
+# # SAS with Python - saspy module
 
-# ## 1. Environment Setup
+# ## Step 0 : Environment Setup
 
 # +
 # To get multiple outputs in the same cell
