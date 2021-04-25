@@ -118,9 +118,27 @@ grouped_2.nth([0,2])
 grouped_2.take([0,2])
 
 # +
+grouped_1 = emp_df_1.groupby('Department', as_index=False)
+grouped_1
+
 # The argument of filter must be a function that, applied to the group as a whole, returns True or False.
 
-grouped_1.filter(lambda x: len(x['Emp_Id']) >= 3)
+grouped_1.filter(lambda x: max(x['Salary']) >= 1121000.0)
+# -
+
+# ### Transform
+
+# +
+# Using transform to get boolean values and then passing this boolean value to the dataframe to get the correct record
+# NOT WORKING AS EXPECTED
+
+emp_df_1['PctSalary'] = grouped_1['Salary'].transform('max')
+emp_df_1
+
+# +
+# The argument of filter must be a function that, applied to the group as a whole, returns True or False.
+
+grouped_1.filter(lambda x: len(x['Emp_Id']) >=3)
 
 # +
 # The argument of filter must be a function that, applied to the group as a whole, returns True or False.
@@ -266,8 +284,13 @@ grouped_3b.agg({ 'Salary' : 'mean', 'Role' : 'sum'}).reset_index()
 grouped_3c = emp_df_1.groupby(['Department'])
 grouped_3c.count()
 
+# +
+# Here i have not created a new column
+# But a new column can be created 
+
 transformed = grouped_3c.transform(lambda x : x.fillna(x.mean()))
 transformed
+# -
 
 grouped_trans = transformed.groupby(level=0)
 grouped_trans.count()
@@ -332,6 +355,8 @@ df_long2.groupby('id').head(2)
 df_long2.groupby('id').tail(1)
 
 # ## TRANSFORM
+#
+# https://pbpython.com/pandas_transform.html
 
 df_long['flag'] = df_long.groupby('id')['prem'].transform(lambda x : x == x.max())
 df_long
