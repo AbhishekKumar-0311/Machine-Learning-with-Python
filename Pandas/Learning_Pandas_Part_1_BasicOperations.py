@@ -15,7 +15,7 @@
 # ---
 
 # ### Prepared by Abhishek Kumar
-# ### https://www.linkedin.com/in/abhishek-kumar-442337b2/
+# ### https://www.linkedin.com/in/abhishekkumar-0311/
 #
 
 import pandas as pd
@@ -54,8 +54,10 @@ emp_df
 
 # ## 2. Import - Creating a dataframe from external file, here csv
 
-cov_df = pd.read_csv('E:\VCS\GitHub\DataScienceAtWork\data\Data USA Cart\covid19.csv')
-cov_df.head()
+# +
+# cov_df = pd.read_csv('E:\VCS\GitHub\Machine-Learning-with-Python\data\Data USA Cart\covid19.csv')
+# cov_df.head()
+# -
 
 # ## 3. Export - Writing a dataframe to external file, here csv
 
@@ -816,7 +818,4 @@ emp_df_8c_dups
 emp_df_8c_nodups = emp_df_8c[~emp_df_8c.duplicated(['Job'], keep = False)]
 emp_df_8c_nodups
 # -
-
-
-
 

@@ -14,6 +14,10 @@
 #     name: python3
 # ---
 
+# ### Prepared by Abhishek Kumar
+# ### https://www.linkedin.com/in/abhishekkumar-0311/
+#
+
 # # Writing SQL query on a dataframe using pandassql
 
 # +
@@ -25,6 +29,8 @@ InteractiveShell.ast_node_interactivity = "all"
 # %matplotlib inline
 
 # +
+# #!pip install pandasql
+
 import pandas as pd
 import numpy as np
 import pandasql as ps
@@ -32,7 +38,7 @@ from pandasql import sqldf
 import sqlite3
 from sqlite3 import Error
 
-df = pd.read_csv('E:\VCS\GitHub\DataScienceAtWork\data\movie.csv')
+df = pd.read_csv('E:\VCS\GitHub\Machine-Learning-with-Python\data\movie.csv')
 
 df.head()
 
@@ -93,7 +99,7 @@ from pandas import DataFrame
 conn = sqlite3.connect('movie.db')  
 c = conn.cursor()
 
-movie = pd.read_csv (r'E:\VCS\GitHub\DataScienceAtWork\data\movie.csv')
+movie = pd.read_csv (r'E:\VCS\GitHub\Machine-Learning-with-Python\data\movie.csv')
 movie.to_sql('MOVIE', conn, if_exists='append', index = False) # Insert the values from the csv file into the table 'CLIENTS' 
 
 read_country = pd.read_csv (r'C:\Users\Ron\Desktop\Client\Country_14-JAN-2019.csv')
@@ -131,16 +137,6 @@ df.to_sql('DAILY_STATUS', conn, if_exists='append', index = False) # Insert the 
 
 
 
-
-
-
-
-
-
-
-
-
-
 # ## https://www.sqlitetutorial.net/sqlite-python/create-tables/
 
 # When you connect to an SQLite database file that does not exist, SQLite automatically creates the new database for you.
@@ -172,7 +168,7 @@ def create_connection(db_file):
 
 
 if __name__ == '__main__':
-    create_connection(r"E:\VCS\GitHub\DataScienceAtWork\data\movie.db")
+    create_connection(r"E:\VCS\GitHub\Machine-Learning-with-Python\data\movie.db")
 # -
 
 # In this code:
@@ -193,12 +189,6 @@ if __name__ == '__main__':
 # If you skip the folder path E:\VCS\GitHub\DataScienceAtWork\data, the program will create the database file in the current working directory (CWD).
 #
 # If you pass the file name as :memory: to the connect() function of the sqlite3 module, it will create a new database that resides in the memory (RAM) instead of a database file on disk.
-
-
-
-
-
-
 
 
 
@@ -250,26 +240,29 @@ connection.close()
 
  
 
-Note :-
+# Note :-
 
-My table description
+# My table description
 
-describe city;
+# describe city;
 
-+---------+--------------+------+-----+---------+----------------+
+# # +---------+--------------+------+-----+---------+----------------+
 
-| Field   | Type         | Null | Key | Default | Extra          |
+# | Field   | Type         | Null | Key | Default | Extra          |
 
-+---------+--------------+------+-----+---------+----------------+
+# # +---------+--------------+------+-----+---------+----------------+
 
-| ID      | int          | NO   | PRI | NULL    | auto_increment |
+# | ID      | int          | NO   | PRI | NULL    | auto_increment |
 
-| Capital | varchar(255) | YES  |     | NULL    |                |
+# | Capital | varchar(255) | YES  |     | NULL    |                |
 
-| Founded | varchar(255) | YES  |     | NULL    |                |
+# | Founded | varchar(255) | YES  |     | NULL    |                |
 
-| Address | varchar(255) | YES  |     | NULL    |                |
+# | Address | varchar(255) | YES  |     | NULL    |                |
 
-+---------+--------------+------+-----+---------+----------------+
+# # +---------+--------------+------+-----+---------+----------------+
+
+
+# -
 
 

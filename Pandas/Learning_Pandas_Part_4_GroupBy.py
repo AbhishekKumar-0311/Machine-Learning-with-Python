@@ -15,7 +15,7 @@
 # ---
 
 # ### Prepared by Abhishek Kumar
-# ### https://www.linkedin.com/in/abhishek-kumar-442337b2/
+# ### https://www.linkedin.com/in/abhishekkumar-0311/
 #
 
 import pandas as pd
@@ -500,15 +500,38 @@ tmp
 emp_df3 = pd.merge(emp_df3,tmp, left_index=True, right_index=True).drop('index', axis=1)
 emp_df3
 
-# ## To retrieve previous/ahead values using SHIFT(n / -n)
-# - shift(n)
-# - shift(-n)
+# ## LAG (+n) / LEAD (-n) functionality
+# ## To retrieve previous  (+n) /ahead (-n) values using SHIFT(n / -n)
+# - shift(n) : LAG 
+# - shift(-n) : LEAD
 
 emp_df3.sort_values(['Department','Salary'],inplace=True)
-emp_df3['PrevSal'] = emp_df3.groupby('Department')['Salary'].shift(-1)
+emp_df3['PrevSal'] = emp_df3.groupby('Department')['Salary'].shift(1)
 emp_df3
 
+# ## Retain the last filled value to fill the NaN cells
+# ## Using FILLNA( method = 'bfill' / 'ffill' )
+#
+# ### bfill - backward fill : Go Backward and fill the empty cell
+# ### ffill  - forward fill    : Go Forward and fill the empty cell
+#
 
+emp_df3
+
+emp_df3.loc[emp_df3.Emp_Id.isin( ['4','6']), 'PrevSal'] = np.NaN
+emp_df3.sort_values(['Department','Emp_Name'], inplace = True)
+emp_df3
+
+emp_df3['ForwardFilledPrevSal'] = emp_df3.groupby('Department')['PrevSal'].fillna(method = 'ffill')
+emp_df3
+
+emp_df3['BackwardFilledPrevSal'] = emp_df3.groupby('Department')['PrevSal'].fillna(method = 'bfill')
+emp_df3
+
+# ## filling-missing-values-by-mean-in-each-group
+
+emp_df3['MeanFilledPrevSal'] = emp_df3.groupby('Department')['BackwardFilledPrevSal'].transform(lambda x: x.fillna(x.mean()))
+emp_df3
 
 # ### References:
 #

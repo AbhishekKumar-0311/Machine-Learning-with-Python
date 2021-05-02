@@ -15,7 +15,7 @@
 # ---
 
 # ### Prepared by Abhishek Kumar
-# ### https://www.linkedin.com/in/abhishek-kumar-442337b2/
+# ### https://www.linkedin.com/in/abhishekkumar-0311/
 #
 
 import pandas as pd
@@ -518,6 +518,7 @@ emp_df_4b.fillna('missing')
 
 # #### ii. Fill gaps forward or backward
 
+emp_df_4b
 emp_df_4b.fillna(method = 'bfill')
 emp_df_4b.fillna(method = 'ffill')
 
@@ -528,7 +529,8 @@ emp_df_4b.fillna(method = 'ffill')
 emp_df_4b_2 = emp_df.copy()
 emp_df_4b_2
 
-emp_df_4b_2.Salary.fillna(emp_df_4b_2.Salary.mean())
+emp_df_4b_2['FillingNaN'] = emp_df_4b_2.Salary.fillna(emp_df_4b_2.Salary.mean())
+emp_df_4b_2
 
 # +
 emp_df_4b_2['Salary'] = emp_df_4b_2.Salary.fillna(emp_df_4b_2.Salary.mean())
