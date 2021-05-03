@@ -116,6 +116,9 @@ grouped_2.nth([0,2])
 # we are selecting the 0th and 2nd rows, not rows whose indices equal 0 and 2.
 
 grouped_2.take([0,2])
+# -
+
+# ### Selecting group based on the condition that applies on the whole group
 
 # +
 grouped_1 = emp_df_1.groupby('Department', as_index=False)
@@ -124,16 +127,6 @@ grouped_1
 # The argument of filter must be a function that, applied to the group as a whole, returns True or False.
 
 grouped_1.filter(lambda x: max(x['Salary']) >= 1121000.0)
-# -
-
-# ### Transform
-
-# +
-# Using transform to get boolean values and then passing this boolean value to the dataframe to get the correct record
-# NOT WORKING AS EXPECTED
-
-emp_df_1['PctSalary'] = grouped_1['Salary'].transform('max')
-emp_df_1
 
 # +
 # The argument of filter must be a function that, applied to the group as a whole, returns True or False.
@@ -284,12 +277,27 @@ grouped_3b.agg({ 'Salary' : 'mean', 'Role' : 'sum'}).reset_index()
 grouped_3c = emp_df_1.groupby(['Department'])
 grouped_3c.count()
 
-# +
 # Here i have not created a new column
 # But a new column can be created 
-
+emp_df_1
 transformed = grouped_3c.transform(lambda x : x.fillna(x.mean()))
 transformed
+
+# +
+# Using transform to get boolean values and then passing this boolean value to the dataframe to get the correct record
+# NOT WORKING AS EXPECTED
+
+emp_df_1['MaxSalary'] = grouped_1['Salary'].transform('max')
+emp_df_1
+
+emp_df_1['SumSalary'] = grouped_1['Salary'].transform('sum')
+emp_df_1
+
+emp_df_1['PctSalary'] = emp_df_1['Salary']/emp_df_1['SumSalary'] * 100
+emp_df_1
+
+# emp_df_1['PctSalary_2'] = grouped_1['Salary'].transform(lambda x : x.sum)
+# emp_df_1
 # -
 
 grouped_trans = transformed.groupby(level=0)
@@ -336,13 +344,24 @@ df_long = df1_melted.reset_index()
 
 df_long
 
+# +
+# Returns min value for each columns within each group
+
 df_long.groupby('id').min()
 
+# +
+# Returns max value for each columns within each group
+
 df_long.groupby('id').max()
+# -
+
+# ### FIRST and LAST returns the non-null value
 
 df_long.groupby('id').first()
 
 df_long.groupby('id').last()
+
+# ### HEAD() and TAIL() - returns the actual head( n ) and tail( n ) records
 
 df_long.groupby('id').head(2)
 
@@ -354,11 +373,66 @@ df_long2.groupby('id').head(2)
 
 df_long2.groupby('id').tail(1)
 
+# ### Another way to get the first and last row is to find the INDEX of MIN or MAX value of a columns and use that index to filter out records
+#
+# - idxmin() and idxmax()
+
+# +
+### Here, idxmax() finds the indices of the rows with max value within groups,
+### and .loc() filters the rows using those indices :
+
+df_long2.loc[df_long2.groupby(["id"])["prem"].idxmax()]
+df_long2.loc[df_long2.groupby(["id"])["prem"].idxmin()]
+# -
+
 # ## TRANSFORM
 #
 # https://pbpython.com/pandas_transform.html
 
+# ### Creating a FLAG 🚩 , indicating the MAX or MIN value
+
 df_long['flag'] = df_long.groupby('id')['prem'].transform(lambda x : x == x.max())
+df_long
+
+# ### Using transform to perform filtering of rows
+# - Transform will help to create a new column or a flag
+# - Based on the new flag, we will filter out rows
+#
+# ### Examples
+# - 1. Simple Scenario :
+#     - Selecting rows with the highest / max / lowest /  min values : This can be achieved using sorting by sort_values() and head() and tail()
+# - 2. Not straighforward Scenario :
+#     - But incase of scenarios, wherein, the selection criteria is not straightforward like MIN/MAX, instead like MEAN or PCT. 
+#         - Then we need to first find the mean or pct within each group and find the rows which satisfy those condition.
+
+# +
+# Simple scenario
+# This is handled using SORT_VALUES() and HEAD()
+
+df_long.sort_values(['id','prem'], ascending=[True, False], inplace = True)
+df_long.groupby('id').head(1)
+# -
+
+df_long[df_long.groupby('id')['prem'].transform(lambda x : x == x.max())]
+
+# +
+# Complex scenario
+
+df_long[df_long.groupby('id')['prem'].transform(lambda x : x <= x.mean())]
+# -
+
+
+
+# ### Alternate way :
+# ### Transform creates a new variable , without changing the shape of the dataframe.
+# - It does not filter any records.  ( But can be used to filter record, by passing the BOOLEAN Value created within transform() to the original dataframe. )
+#     - See the above example
+# - In case of any requirement of creating a FLAG 🚩 , indicating the MAX or MIN value , the new column can be checked for equality using ==
+
+df_long['flag'] = df_long.groupby('id')['prem'].transform('max')
+df_long
+
+df_long['flag'] = df_long['prem'] == df_long.groupby('id')['prem'].transform('max')
 df_long
 
 # https://www.analyticsvidhya.com/blog/2020/03/understanding-transform-function-python/
@@ -491,6 +565,8 @@ emp_df3
 emp_df3['Count'] = emp_df3.sort_values(['Department','Emp_Name'], ascending=True).groupby('Department')['Emp_Name'].cumcount()+1
 emp_df3.sort_values(['Department','Emp_Name'], ascending=True, inplace=True)
 emp_df3
+
+# #### Alternate way, not effective
 
 tmp = emp_df3.groupby('Department')['Emp_Name'].cumcount().reset_index()
 tmp

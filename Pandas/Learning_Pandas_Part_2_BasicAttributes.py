@@ -358,6 +358,9 @@ emp_df_3c.all()
 # Comparison of dataframe to return a Boolean value
 (emp_df_3c == emp_df).all()
 (emp_df_3c == emp_df).all(axis= None)
+
+# NaNs are also considered to be equal and hence return TRUE
+emp_df_3c.equals(emp_df)
 # -
 
 # ### 4. DataFrame.any(self, axis=0, bool_only=None, skipna=True, level=None, **kwargs)
@@ -584,6 +587,7 @@ emp_df_4b_3
 emp_df_4b_3.dropna()
 
 # Note the behaviour of subset= parameter. This defines the list of columns that is looked for NaN
+# axis = 0 checks for each record and drops rows which have NULLs for the 2 mentioned columns
 emp_df_4b_3.dropna(subset = ['Emp_Id','DOB'], inplace = True, how = 'any', axis = 0)
 emp_df_4b_3
 # -

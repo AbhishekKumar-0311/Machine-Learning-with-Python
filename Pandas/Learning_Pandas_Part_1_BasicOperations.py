@@ -315,7 +315,7 @@ emp_df_3d
 import numpy as np
 import pandas as pd
 df = pd.read_csv('https://query.data.world/s/Hfu_PsEuD1Z_yJHmGaxWTxvkz7W_b0')
-df.loc[np.isnan(df['Product_Base_Margin']), ['Product_Base_Margin']] = df['Product_Base_Margin'].mean()
+df.loc[df['Product_Base_Margin'].isna(), ['Product_Base_Margin']] = df['Product_Base_Margin'].mean()
 print(round((100*(df.isnull().sum()/len(df.index))),2))#Round off to 2 decimal places.
 
 # -
@@ -326,12 +326,16 @@ print(round((100*(df.isnull().sum()/len(df.index))),2))#Round off to 2 decimal p
 # 2. Here, Rows are filtered out to either update the existing dataframe or create a new dataframe
 #
 # #### i.   Positional indexing : df.iloc[np.where(filter_condition)]  - fast
-# #### v.  Label indexing         : df.loc[df['A'].isin(['foo'])] - fast
-# #### v.  Label indexing         : df.loc[filter_condition] - slow 
-# #### iv. Boolean indexing    : df[filter_condition] - slower ()
-# #### vi.  df.query() API         : df.query('(col_nm <operator> value)') - slowest (for large data, the query is very efficient. More so than the standard approach)
-#     
-# filter_condition, something like df.A=='foo' 
+# #### ii.   Label indexing      : df.loc[df['A'].isin(['foo'])] - fast
+# #### iii.   Label indexing      : df.loc[filter_condition] - slow 
+# #### iv.  Boolean indexing    : df[filter_condition] - slower ()
+# #### v.  df.query() API      : df.query('(col_nm >operator< value)') - slowest (for large data, the query is very efficient. More so than the standard approach)
+# - filter_condition, something like df.A=='foo'
+# - newdf = df.query('origin == "JFK" & carrier == "B6"')
+#
+# #### vi. Pandas dataframe.filter() function is used to Subset rows or columns of dataframe according to labels in the specified index. Note that this routine does not filter a dataframe on its contents. The filter is applied to the labels of the index.
+# DataFrame.filter(items=None, like=None, regex=None, axis=None)[source]
+# - df.filter ( )              : df.filter( rows or columns ) 
 
 # ### Boolean Indexing
 
@@ -408,7 +412,7 @@ emp_df_4d1
 # #### i. df_name[['col_a','col_b','col_c']] - Variants can be : df_name[columns_list]
 # #### ii. Positional indexing - df_name.iloc[ : , m:n]
 # #### iii. Label Indexing - df_name.loc[ : , 'col_m':'col_n'] - Variants are : df_name.loc[ : , ['col_a','col_b','col_c']] : df_name.loc[ : , columns_list]
-# #### iv. pd.DataFrame( df , columns = columns_list 
+# #### iv. pd.DataFrame( df , columns = columns_list )
 #
 # #### There are 2 popular techniques of DROPPING COLUMNS
 # #### v. df.drop('col_a') or df.drop(['col_a','col_b','col_c']) or df.drop(columns_list)
