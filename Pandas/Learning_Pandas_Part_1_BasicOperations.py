@@ -263,10 +263,15 @@ emp_df_3b['Bonus_amt'] = np.where(emp_df_3b['Bonus_amt'] >= 20000, emp_df_3b.Bon
 emp_df_3b
 
 # ### List comprehension -  another way to create another column conditionally.
+#
+# - https://www.listendata.com/2019/07/python-list-comprehension-with-examples.html
+#
 # 1. When working with object dtypes in columns, list comprehensions typically outperform most other methods.
 
 emp_df_3b['Bonus_amt'] = [ x+1000 if x <= 20000 else x for x in emp_df_3b['Bonus_amt'] ]
 emp_df_3b
+
+
 
 # ### np.select() - If there are more than two conditions then use np.select
 
@@ -307,6 +312,12 @@ emp_df_3d
 emp_df_3d.loc[emp_df_3d['Bonus_amt'].isna(), 'Bonus_amt' ] = 10000
 emp_df_3d
 
+# Updating the missing values (NaN) with any custom value, here 10000
+# Using fillna()
+
+emp_df_3d.Bonus_amt.fillna(10000, inplace=True)
+emp_df_3d
+
 # +
 #Mean Imputation
 #Description
@@ -321,6 +332,8 @@ print(round((100*(df.isnull().sum()/len(df.index))),2))#Round off to 2 decimal p
 # -
 
 # ## 4. Filtering out Rows from dataframe
+#
+# - *_https://www.listendata.com/2019/07/how-to-filter-pandas-dataframe.html_*
 #
 # 1. Equivalent of IF Statement and WHERE statement/option in SAS.
 # 2. Here, Rows are filtered out to either update the existing dataframe or create a new dataframe
@@ -383,6 +396,8 @@ emp_df_4c
 
 emp_df_4c_1 = emp_df_4c.iloc[np.where(emp_df_4c['Bonus_amt'] >= 20000)]
 emp_df_4c_1
+
+emp_df_4c['Bonus_amt'] >= 20000
 # -
 
 # ### .loc[ ] or without .loc[ ] with .isin() - fast
@@ -403,6 +418,60 @@ emp_df_4d0
 emp_df_4d1 = emp_df_4d[~emp_df_4d.Job.isin(['Tech Lead', 'Data Scientist'])]
 emp_df_4d1
 # -
+
+# ### df. QUERY( ) 
+# - https://www.listendata.com/2020/12/how-to-use-variable-in-query-in-pandas.html
+
+# +
+# Setup for dataframe creation
+
+emp_df_4e = emp_df_3c.copy()
+emp_df_4e
+
+# Mention Value Explicitly
+emp_df_4e1 = emp_df_4e.query('Bonus_amt >= 21000')
+emp_df_4e1
+
+# Mention Value Explicitly
+emp_df_4e2 = emp_df_4e.query('Job == "Data Scientist"')
+emp_df_4e2
+
+# Reference Method
+Bmt = 21000
+emp_df_4e3 = emp_df_4e.query("Bonus_amt == @Bmt")
+emp_df_4e3
+
+# Comparing Columns
+emp_df_4e['Bmt'] = emp_df_4e['Bonus_amt']
+emp_df_4e.loc[emp_df_4e.Company == 'Facebook', 'Bmt' ] = 50000
+emp_df_4e
+emp_df_4e4 = emp_df_4e.query("Bonus_amt == Bmt")
+emp_df_4e4
+
+Bmt = 20000
+column1 = 'Bonus_amt'
+# to pass column name as a variable in query
+emp_df_4e5 = emp_df_4e.query("{0} >= @Bmt".format(column1))
+emp_df_4e5
+# -
+
+# ### np.WHERE ( )
+
+# +
+# Setup for dataframe creation
+
+emp_df_4f = emp_df_3c.copy()
+emp_df_4f
+
+# Returns Index of the satisfied condition
+emp_df_4f_1 = np.where(emp_df_4c['Bonus_amt'] >= 20000)
+emp_df_4f_1
+
+# -
+
+
+
+
 
 # ## 5. Selecting and Dropping columns
 
