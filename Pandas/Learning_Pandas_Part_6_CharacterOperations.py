@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -30,25 +31,7 @@ InteractiveShell.ast_node_interactivity = "all"
 # %matplotlib inline
 # -
 
-# ## 1. Dataframe creation
-
-# +
-salary = [['Google', 'Machine Learning Engineer', 121000],
-['Google', 'Data Scientist', 109000],
-['Google', 'Tech Lead', 129000],
-['Facebook', 'Data Scientist', 103000]]
-
-columns_name=['Company', 'Job','Salary']
-
-emp_df = pd.DataFrame(salary,columns=columns_name)
-emp_df
-# -
-
-#
-#
-# - https://www.listendata.com/2019/06/python-string-functions.html
-
-# ### List of frequently used string functions
+# ## List of frequently used string functions
 
 # |Function	    							|Description																		|MS EXCEL FUNCTION |
 # |:-|:-|:-|
@@ -56,29 +39,47 @@ emp_df
 # |mystring[:N]								|Extract N number of characters from start of string.								|LEFT( )           |
 # |mystring[-N:]								|Extract N number of characters from end of string									|RIGHT( )          |
 # |mystring[X:Y]								|Extract characters from middle of string, starting from X position and ends with Y	|MID( )            |
-# |str.split()								|Split each string with the given pattern.											|-                 |
-# |str.replace(old_substring, new_substring)	|Replace a part of text with different sub-string									|REPLACE( )        |
-# |str.contains('pattern', case=False)		|Returns a Boolean value True for each element if the substring contains in the element, else False	|SQL LIKE Operator |
-# |str.extract(regular_expression)			|Return matched values (Pandas Function)											|-                 |
-# |str.count('sub_string')					|Count occurence of pattern in string												|-                 |
+# |str.split(),rsplit()						|Split each string with the given pattern.											|-                 |
 # |cat(sep=' ')								|Concatenates the series/index elements with given separator.						|-                 |
 # |separator.join(str)						|Concatenate Strings																|CONCATENATE( )    |
+# |str.replace(old_substring, new_substring)	|Replace a part of text with different sub-string									|REPLACE( )        |
+# |str.count('sub_string')					|Count occurence of pattern in string												|-                 |
 # |strip(),lstrip(),rstrip()					|Helps strip whitespace(including newline) from each string in the Series/index from both the sides.|  |
 # |repeat(value)								|Repeats each element with specified number of times.								|-                 |
 # |startswith(pattern)						|Returns true if the element in the Series/Index starts with the pattern.			|-                 |
 # |endswith(pattern)  						|Returns true if the element in the Series/Index ends with the pattern.				|-                 |
-# |find(pattern)								|Returns the first position of the first occurrence of the pattern.					|-                 |
+# |str.contains('pattern', case=False)		|Returns a Boolean value True for each element if the substring contains in the element, else False	|SQL LIKE Operator |
+# |match(pattern)								|Determine if each string starts with a match of a regular expression.				|-                 |
+# |index(pattern),rindex()					|Return lowest indexes in each string in Series/Index.								|-                 |
+# |find(pattern),rfind()						|Returns the first position of the first occurrence of the pattern.					|-                 |
 # |findall(pattern)							|Returns a list of all occurrence of the pattern.									|-                 |
+# |str.extract(regular_expression)			|Return matched values (Pandas Function)											|-                 |
+# |str.extractall(regular_expression)			|Return matched values (Pandas Function)											|-                 |
+# |str.zfill(n)								|Pad strings in the Series/Index by prepending ‘0’ characters.						|-                 |
+# |str.ljust(width, fillchar=' ')				|Fills the right side of strings with an arbitrary character. 						|-                 |
+# |str.rjust(width, fillchar=' ')				|Fills the left side of strings with an arbitrary character.						|-                 |
+# |str.center(width, fillchar=' ')			|Fills both sides of strings with an arbitrary character.							|-                 |
+# |str.pad(width,side='left',fillchar='%')	|Pad strings in the Series/Index up to width.										|-                 |
 # |str.lower()								|Convert characters to lowercase													|LOWER( )          |
 # |str.upper()								|Convert characters to uppercase													|UPPER( )          |
 # |str.swapcase()								|Swaps the case lower/upper.  														|-                 |
+# |str.title()								|Converts first character of each word to uppercase and remaining to lowercase.		|-                 |
+# |str.capitalize()							|Converts first character to uppercase and remaining to lowercase.					|-                 |
 # |str.isalnum()								|Check whether string consists of only alphanumeric characters						|-                 |
-# |str.islower()								|Check whether characters are all lower case										|-                 |
-# |str.isupper()								|Check whether characters are all upper case										|-                 |
+# |str.isdigit()								|Check whether string consists of only digit characters								|-                 |
+# |str.isalpha()								|Check whether string consists of only alphabets characters							|-                 |
+# |str.isdecimal()							|Check whether string consists of only decimals characters							|-                 |
 # |str.isnumeric()							|Check whether string consists of only numeric characters							|-                 |
 # |str.isspace()								|Check whether string consists of only whitespace characters						|-                 |
+# |str.islower()								|Check whether characters are all lower case										|-                 |
+# |str.isupper()								|Check whether characters are all upper case										|-                 |
+# |str.istitle()								|Check whether characters are all title case										|-                 |
+
 #
 #
+# - https://www.listendata.com/2019/06/python-string-functions.html
+
+# ## 1. Dataframe creation
 
 import numpy as np
 import pandas as pd
@@ -95,19 +96,141 @@ df_sample
 df = df_sample.copy()
 df
 
+
+
+# ## LEN()
+# - LENGTH() in SAS
+
+# +
+# Setup Data
+df1 = df.copy()
+df1
+
+df1['LenOfColA'], df1['LenOfColB'] = df1['col_a'].str.len() ,  df1['col_b'].str.len()
+df1
+# -
+
+# ## Slicing using Index
+# - SUBSTR in SAS
+
+# +
+# Setup Data
+df2 = df.copy()
+df2
+
+df2['substring1'] = df2['col_a'].str[-2:]
+df2
+# -
+
+df2['substring2'] = df2['col_a'].str[0:3]
+df2
+
+df2['substring3'] = df2['col_a'].str[2::-1]
+df2
+
 # ## SPLIT()
 # - SCAN in SAS
+# - .str.split(pat=None, n=- 1, expand=False)[source]
+# - Parameters
+#     - pat - string or regex to split on
+#     - n - number of splits
+#     - expand - True/False : If True, return DataFrame/MultiIndex expanding dimensionality.
+# - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.split.html
+# - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.rsplit.html
+# - 
 
-df['City'] = df['col_a'].str.split(',').str[0]
-df
-df['State'] = df['col_a'].str.split(',').str[1]
-df
+# +
+# Setup Data
+df3 = df.copy()
+df3
+
+df3['City'] = df3['col_a'].str.split(',').str[0]
+df3
+df3['State'] = df3['col_a'].str.split(',').str[1]
+df3
+df3['State2'] = df3['col_a'].str.split(',').str.get(1)
+df3
+# -
+
+# ### Between different symbols
+# - The goal is to obtain the digits between two different symbols (the dash symbol and the dollar symbol)
+#     - First, set the variable (i.e., betweenTwoDifferentSymbols) to obtain all the characters after the dash symbol
+#     - Then, set the same variable to obtain all the characters before the dollar symbol
+
+# +
+Data = {'Identifier': ['IDAA-111$AA','IDB-2222222$B','IDCCC-33$CCC']}
+dfi = pd.DataFrame(Data, columns= ['Identifier'])
+
+Data
+dfi
+
+betweenTwoDifferentSymbols = dfi['Identifier'].str.split('-').str[1]
+dfi['betweenTwoDifferentSymbols'] = betweenTwoDifferentSymbols.str.split('$').str[0]
+
+dfi
+# -
+
+# ## CAT()
+# - catx, cats in SAS
+# - sep = ' , '
+# - na_rep = '?' - It replaces the NaN with question-mark ( ? )
+
+# ### Concat 2 columns
+# - In the same way, it could be extended for more columns
+#     - ```df['combined']=df['bar']+'_'+df['foo']+'_'+df['new']```
+
+# +
+# Setup Data
+df4 = df3.copy()
+df4
+
+df4['Location1'] = df4['City'] + '-' + df4['State']
+df4
+# -
+
+# ### Concat 2 columns using series.str.cat()
+# - sep = ' , ' - To add separator in between columns
+# - na_rep = '?' - It replaces the NaN with question-mark ( ? )
+# - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.cat.html
+
+df4['Location2'] = df4['City'].str.strip().str.cat(df4['State'].str.strip(), sep= ':::')
+df4
+
+# ### Concat 2 or more columns
+# - 2 or more columns can be added by providing list of values as shown below
+
+df4['Cat3'] = df4['City'].str.strip().str.cat([df4['State'],df4['col_c']], sep= ':::')
+df4
+
+# ### Technique to perform concat on non-string columns
+# - ```df['combined']=df['bar'].astype(str)+'_'+df['foo']+'_'+df['new']```
+# - ```df['Full Date'] = df['Day'].map(str) + '-' + df['Month'].map(str) + '-' + df['Year'].map(str)```
+
+# ## STR.JOIN()
+
+# Setup Data
+df5 = df3.copy()
+df5
+
+
 
 # ## REPLACE()
 # - TRANWRD in SAS
+# - str.replace(old_text,new_text,case=False) is used to replace a particular character(s) or pattern with some new value or pattern.
+# - .str.replace(pat, repl, n=- 1, case=None, flags=0, regex=None)[source]
+# - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.replace.html
 
-df['NewColA'] = df['col_a'].str.replace('TX', 'Abhishek')
-df
+# +
+# Setup Data
+df6 = df.copy()
+df6
+
+df6['NewColA1'] = df6['col_a'].str.replace('TX', 'Abhishek')
+df6
+df6['NewColA2'] = df6['col_a'].str.replace('tX', ' ', case= False)
+df6
+df6['LenNewColA2'] = df6['NewColA2'].str.len()
+df6
 
 # +
 # Replacing 1st word of col_a with Mumbai
@@ -116,26 +239,40 @@ df
 # df
 # -
 
-# ## CAT()
-# - catx, cats in SAS
+# ## COUNT( )
+# - It returns the count of the appearance of pattern in each element in Data-Frame like below in example it counts ‘n’ in each string of DataFrame and returns the total counts of ‘n’ in each string.
+# - In SAS
+#     - COUNT  : Count characters
+#     - COUNTW : Count words in SAS
+#     - COUNTC : Count specific character in SAS
 
-df['Location1'] = df['City'] + '-' + df['State']
-df
+# +
+# Setup Data
+df7 = df.copy()
+df7
 
-df['Location2'] = df['City'].str.strip().str.cat(df['State'].str.strip(), sep= ':::')
-df
+import re
+df7['CountA'] = df7['col_a'].str.count('c',re.I)
+df7
+# -
 
-# ## Slicing using Index
-# - SUBSTR in SAS
+# ### Count No. of Words
 
-df['substring1'] = df['Location2'].str[-2:]
-df
+df7['NoOfWords1'] = [len(x.split(',')) for x in df7['col_a'].tolist()]
+df7
 
-df['substring2'] = df['Location2'].str[0:3]
-df
+df7['NoOfWords2'] = df7['col_a'].str.split(',').str.len()
+df7
+df7['NoOfWords3'] = df7['col_a'].str.split(',').apply(len)
+df7
 
-df['substring3'] = df['Location2'].str[2::-1]
-df
+import re
+df7['NoOfWords4'] = df7['col_a'].str.count('\w+')
+df7
+
+import re
+df7['NoOfWords5'] = df7['col_a'].str.count('^[cpiad]\w+', re.I)
+df7
 
 # ## STRIP( ' ' )
 # - strip(), lstrip(), rstrip()
@@ -143,33 +280,240 @@ df
 #
 # - STRIP, TRIM in SAS
 
-df['NewColB'] = df['col_b'].str.strip('K')
-df
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # +
-# df1 = df
-# df1
+# Setup Data
+df8 = df.copy()
+df8
 
-# +
-# df == df1
+df8['NewColB'] = df8['col_b'].str.strip('K')
+df8
 # -
+
+# ## REPEAT()
+# - REPEAT() in SAS
+
+# +
+# Setup Data
+df9 = df.copy()
+df9
+
+df9['RepeatColD'] = df9['col_d'].str.repeat(3)
+df9
+# -
+
+# ## STARTSWITH()
+# - .str.startswith(pat, na=None)
+# - na = False : Specifying na to be False instead of NaN.
+# - Using SUBSTR() in SAS
+# - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.startswith.html
+
+# +
+# Setup Data
+df10 = df.copy()
+df10
+
+df10[df10.col_a.str.startswith('C')]
+# -
+
+# ### It's possible to pass a tuple of prefixes to startswith() method in Python.
+# - If the string starts with any item of the tuple, startswith() returns True. If not, it returns False
+
+df10[df10.col_a.str.startswith(('C','P'))]
+
+# ## ENDSWITH()
+# - .str.endswith(pat, na=None)[source]
+# - na = False : Specifying na to be False instead of NaN.
+# - Using SUBSTR() in SAS
+# - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.endswith.html
+
+# +
+# Setup Data
+df11 = df.copy()
+df11
+
+df11[df11.col_a.str.endswith('X')]
+# -
+
+# ## CONTAINS()
+# - Using CONTAINS() in SAS
+# - .str.contains(pat, case=True, flags=0, na=None, regex=True)[source]
+# - Test if pattern or regex is contained within a string of a Series or Index.
+# - Return boolean Series or Index based on whether a given pattern or regex is contained within a string of a Series or Index.
+# - Parameters
+#     - pat : str :  Character sequence or regular expression.
+#     - case : bool : default True If True, case sensitive.
+#     - flags : int : default 0 (no flags) Flags to pass through to the re module, e.g. re.IGNORECASE.
+#     - na : scalar : optional Fill value for missing values. The default depends on dtype of the array. For object-dtype, numpy.nan is used. For StringDtype, pandas.NA is used.
+#     - regex : bool : default True If True, assumes the pat is a regular expression.
+#         - If False, treats the pat as a literal string.
+
+# Setup Data
+df12 = df.copy()
+df12
+
+bool = df12.col_a.str.contains('oU', flags = re.IGNORECASE)
+df12[bool]
+
+bool = df12.col_a.str.contains(('tx|ca'), case = False)
+df12[bool]
+
+bool = df12.col_b.str.contains(('^[0-6].*'), case = False)
+df12[bool]
+
+bool = df12.col_a.str.contains('z', flags = re.IGNORECASE)
+df12[bool]
+
+# +
+# Ending with TX , ignore case
+
+bool = df12.col_a.str.contains('tx$', flags = re.IGNORECASE, regex=True)
+df12[bool]
+
+# +
+# Ending with 2 characters , ignore case
+
+bool = df12.col_a.str.contains('\$', flags = re.IGNORECASE, regex=True)
+df12[bool]
+# -
+
+# ## str.MATCH
+# - str.match(pat, case=True, flags=0, na=None)[source]
+# - Determine if each string starts with a match of a regular expression.
+# - Parameters
+#     - pat : Character sequence or regular expression.
+#     - case : bool : True, if case sensitive
+#     - flags : Regex module flags, e.g. re.IGNORECASE.
+#     - na : Fill value for missing values.
+# - Returns : Series/array of boolean values
+
+
+
+# ## str.INDEX
+# - Series.str.index(sub, start=0, end=None)[source]
+# - Return lowest indexes in each string in Series/Index.
+# - Returns ValueError on failure
+# - Parameters
+#     - sub - substring being searched
+#     - start - int, left edge index
+#     - end - int, right edge index
+
+
+
+# ## str.FIND
+# - Series.str.find(sub, start=0, end=None)[source]
+# - Return lowest indexes in each string in Series/Index.
+# - Return -1 on failure, unlike INDEX(), which returns ValueError
+# - Parameters
+#     - sub - substring being searched
+#     - start - int, left edge index
+#     - end - int, right edge index
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ## https://pandas.pydata.org/docs/reference/api/pandas.Series.str.zfill.html
+
+# |Function	    							|Description																		|MS EXCEL FUNCTION |
+# |:-|:-|:-|
+# |str.zfill(n)								|Pad strings in the Series/Index by prepending ‘0’ characters.						|-                 |
+# |str.ljust(width, fillchar=' ')				|Fills the right side of strings with an arbitrary character. 						|-                 |
+# |str.rjust(width, fillchar=' ')				|Fills the left side of strings with an arbitrary character.						|-                 |
+# |str.center(width, fillchar=' ')			|Fills both sides of strings with an arbitrary character.							|-                 |
+# |str.pad(width,side='left',fillchar='%')	|Pad strings in the Series/Index up to width.										|-                 |
+
+# ### str.zfill(width)[source]
+# - width - Minimum length of resulting string
+
+# ### str.rjust(width, fillchar=' ')[source]
+# - Pad left side of strings in the Series/Index.
+# - width - Minimum width of resulting string
+# - fillchar - Additional character for filling, default is whitespace.
+
+# ### str.ljust(width, fillchar=' ')[source]
+# - Pad right side of strings in the Series/Index.
+# - width - Minimum width of resulting string
+# - fillchar - Additional character for filling, default is whitespace.
+
+# ### str.center(width, fillchar=' ')[source]
+# - Pad left and right side of strings in the Series/Index.
+# - width - Minimum width of resulting string
+# - fillchar - Additional character for filling, default is whitespace.
+
+# ### .str.pad(width, side='left', fillchar=' ')[source]
+# - Pad strings in the Series/Index up to width.
+# - Parameters
+#     - width - int, minimum width of resulting string
+#     - side - left, right, both - Side from which to fill resulting string.
+#     - fillchar - Additional character for filling, default is whitespace.
+# - Series.str.pad(side='left') : Series.str.rjust
+# - Series.str.pad(side='right') : Series.str.ljust
+# - Series.str.pad(side='both') : Series.str.center
+# - Series.str.pad(side='left', fillchar='0') : Series.str.zfill
+
+
+
+# ## https://pandas.pydata.org/docs/reference/api/pandas.Series.str.lower.html
+
+# |Function	    							|Description																		|MS EXCEL FUNCTION |
+# |:-|:-|:-|
+# |str.lower()								|Convert characters to lowercase													|LOWER( )          |
+# |str.upper()								|Convert characters to uppercase													|UPPER( )          |
+# |str.swapcase()								|Swaps the case lower/upper.  														|-                 |
+# |str.title()								|Converts first character of each word to uppercase and remaining to lowercase.		|-                 |
+# |str.capitalize()							|Converts first character to uppercase and remaining to lowercase.					|-                 |
+
+
+
+# ## https://pandas.pydata.org/docs/reference/api/pandas.Series.str.isalpha.html
+
+# |Function	    							|Description																		|MS EXCEL FUNCTION |
+# |:-|:-|:-|
+# |str.isalnum()								|Check whether string consists of only alphanumeric characters						|-                 |
+# |str.isdigit()								|Check whether string consists of only digit characters								|-                 |
+# |str.isalpha()								|Check whether string consists of only alphabets characters							|-                 |
+# |str.isdecimal()							|Check whether string consists of only decimals characters							|-                 |
+# |str.isnumeric()							|Check whether string consists of only numeric characters							|-                 |
+# |str.isspace()								|Check whether string consists of only whitespace characters						|-                 |
+# |str.islower()								|Check whether characters are all lower case										|-                 |
+# |str.isupper()								|Check whether characters are all upper case										|-                 |
+# |str.istitle()								|Check whether characters are all title case										|-                 |
+
+
+
+# # Object vs String
+# Before pandas 1.0, only “object” datatype was used to store strings which cause some drawbacks because non-string data can also be stored using “object” datatype. Pandas 1.0 introduces a new datatype specific to string data which is StringDtype. As of now, we can still use object or StringDtype to store strings but in the future, we may be required to only use StringDtype.
+# One important thing to note here is that object datatype is still the default datatype for strings. To use StringDtype, we need to explicitly state it.
+# We can pass “string” or pd.StringDtype() argument to dtype parameter to string datatype.
+#
+# ![image.png](attachment:image.png)
+
+
 
 
