@@ -50,6 +50,7 @@ InteractiveShell.ast_node_interactivity = "all"
 # |endswith(pattern)  						|Returns true if the element in the Series/Index ends with the pattern.				|-                 |
 # |str.contains('pattern', case=False)		|Returns a Boolean value True for each element if the substring contains in the element, else False	|SQL LIKE Operator |
 # |match(pattern)								|Determine if each string starts with a match of a regular expression.				|-                 |
+# |fullmatch(pattern)							|Stricter matching that requires the entire string to match.						|-                 |
 # |index(pattern),rindex()					|Return lowest indexes in each string in Series/Index.								|-                 |
 # |find(pattern),rfind()						|Returns the first position of the first occurrence of the pattern.					|-                 |
 # |findall(pattern)							|Returns a list of all occurrence of the pattern.									|-                 |
@@ -137,7 +138,6 @@ df2
 #     - expand - True/False : If True, return DataFrame/MultiIndex expanding dimensionality.
 # - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.split.html
 # - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.rsplit.html
-# - 
 
 # +
 # Setup Data
@@ -340,10 +340,10 @@ df11[df11.col_a.str.endswith('X')]
 # - Test if pattern or regex is contained within a string of a Series or Index.
 # - Return boolean Series or Index based on whether a given pattern or regex is contained within a string of a Series or Index.
 # - Parameters
-#     - pat : str :  Character sequence or regular expression.
+#     - pat : str :  Character sequence or  **regular expression**.
 #     - case : bool : default True If True, case sensitive.
 #     - flags : int : default 0 (no flags) Flags to pass through to the re module, e.g. re.IGNORECASE.
-#     - na : scalar : optional Fill value for missing values. The default depends on dtype of the array. For object-dtype, numpy.nan is used. For StringDtype, pandas.NA is used.
+#     - na : scalar : optional Fill value for missing values, eg False . The default depends on dtype of the array. For object-dtype, numpy.nan is used. For StringDtype, pandas.NA is used.
 #     - regex : bool : default True If True, assumes the pat is a regular expression.
 #         - If False, treats the pat as a literal string.
 
@@ -372,7 +372,7 @@ df12[bool]
 # +
 # Ending with 2 characters , ignore case
 
-bool = df12.col_a.str.contains('\$', flags = re.IGNORECASE, regex=True)
+bool = df12.col_a.str.contains('\w{2}$', flags = re.IGNORECASE, regex=True)
 df12[bool]
 # -
 
@@ -380,24 +380,60 @@ df12[bool]
 # - str.match(pat, case=True, flags=0, na=None)[source]
 # - Determine if each string starts with a match of a regular expression.
 # - Parameters
-#     - pat : Character sequence or regular expression.
+#     - pat : Character sequence or **regular expression**.
 #     - case : bool : True, if case sensitive
 #     - flags : Regex module flags, e.g. re.IGNORECASE.
 #     - na : Fill value for missing values.
 # - Returns : Series/array of boolean values
 
+# Setup Data
+df13 = df.copy()
+df13
 
+bool = df13.col_a.str.match('h', flags = re.IGNORECASE)
+df13[bool]
+
+bool = df13.col_a.str.match('h', case = False)
+df13[bool]
+
+bool = df13.col_b.str.match('62.*k', case = False)
+df13[bool]
+
+# ## str.FULLMATCH
+# - str.fullmatch(pat, case=True, flags=0, na=None)[source]
+# - Determine if each string starts with a match of a regular expression.
+# - Parameters
+#     - pat : Character sequence or **regular expression**.
+#     - case : bool : True, if case sensitive
+#     - flags : Regex module flags, e.g. re.IGNORECASE.
+#     - na : Fill value for missing values.
+# - Returns : Series/array of boolean values
+
+bool = df13.col_b.str.fullmatch('62.*')
+df13[bool]
+
+bool = df13.col_b.str.fullmatch('62K-70k', case= False)
+df13[bool]
 
 # ## str.INDEX
 # - Series.str.index(sub, start=0, end=None)[source]
 # - Return lowest indexes in each string in Series/Index.
-# - Returns ValueError on failure
+# - Returns ValueError on failure, when the substring is not found.
 # - Parameters
 #     - sub - substring being searched
 #     - start - int, left edge index
 #     - end - int, right edge index
 
+# Setup Data
+df14 = df.copy()
+df14
 
+# +
+# Its not working as expected
+
+# bool = df14.col_a.str.index('Dallas',start=0)
+# df14[bool]
+# -
 
 # ## str.FIND
 # - Series.str.find(sub, start=0, end=None)[source]
@@ -407,34 +443,79 @@ df12[bool]
 #     - sub - substring being searched
 #     - start - int, left edge index
 #     - end - int, right edge index
+#     
+# - RFIND() - Return highest indexes in each strings in the Series/Index.
+
+# Setup Data
+df15 = df.copy()
+df15
+
+df15['isA'] = df15.col_a.str.find('Dallas',start=0, end=6)
+df15
+
+df15['isA1'] = df15.col_a.str.find('allas')
+df15
+
+df15['isA2'] = df15.col_a.str.rfind('San')
+df15
+
+# ## str.FINDALL
+# - Series.str.findall(pat, flags=0)[source]
+# - Find all occurrences of pattern or regular expression in the Series/Index.
+# - Equivalent to applying re.findall() to all the elements in the Series/Index.
+# - Parameters
+#     - pat - Pattern or **regular expression**.
+#     - flags - Flags from re module, e.g. re.IGNORECASE (default is 0, which means no flags).
+# - Return - All non-overlapping matches of pattern or regular expression in each string of this Series/Index.
+
+# Setup Data
+df16 = df.copy()
+df16
+
+# ### If the pattern is found more than once in the same string, then a list of multiple strings is returned:
+
+matches = df16['col_a'].str.repeat(3).str.findall('Go', flags=re.I)
+type(matches)
+matches
+matches[2][2]
+
+matches = df16['col_a'].str.repeat(3).str.findall('go', flags=re.I)
+type(matches)
+matches
+matches[:][2]
+
+# ## str.extract
+# Series.str.extract(pat, flags=0, expand=True)[source]
+# - Extract capture groups in the regex pat as columns in a DataFrame.
+#
+# - For each subject string in the Series, extract groups from the first match of regular expression pat.
+#
+# - Parameters
+#     - patstr - Regular expression pattern with capturing groups.
+#  
+#     - flagsint, default 0 (no flags) - Flags from the re module, e.g. re.IGNORECASE, that modify regular expression matching for things like case, spaces, etc. For more details, see re.
+#
+#     - expandbool, default True - If True, return DataFrame with one column per capture group. If False, return a Series/Index if there is one capture group or DataFrame if there are multiple capture groups.
+#
+# - Returns - DataFrame or Series or Index
+#     - A DataFrame with one row for each subject string, and one column for each group. Any capture group names in regular expression pat will be used for column names; otherwise capture group numbers will be used. The dtype of each result column is always object, even when no match is found. If expand=False and pat has only one capture group, then return a Series (if subject is a Series) or Index (if subject is an Index).
+#     
+# - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.extract.html
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# ## str.extractall
+# - Series.str.extractall(pat, flags=0)[source]
+# - Extract capture groups in the regex pat as columns in DataFrame.
+# - For each subject string in the Series, extract groups from all matches of regular expression pat. When each subject string in the Series has exactly one match, extractall(pat).xs(0, level=’match’) is the same as extract(pat).
+# - Parameters
+#     - patstr - Regular expression pattern with capturing groups.
+#     - flagsint, default 0 (no flags)
+#     - A re module flag, for example re.IGNORECASE. These allow to modify regular expression matching for things like case, spaces, etc. Multiple flags can be combined with the bitwise OR operator, for example re.IGNORECASE | re.MULTILINE.
+# - Returns - DataFrame
+#     - A DataFrame with one row for each match, and one column for each group. Its rows have a MultiIndex with first levels that come from the subject Series. The last level is named ‘match’ and indexes the matches in each item of the Series. Any capture group names in regular expression pat will be used for column names; otherwise capture group numbers will be used.
+#     
+# - https://pandas.pydata.org/docs/reference/api/pandas.Series.str.extractall.html#pandas.Series.str.extractall
 
 
 
@@ -513,6 +594,10 @@ df12[bool]
 # We can pass “string” or pd.StringDtype() argument to dtype parameter to string datatype.
 #
 # ![image.png](attachment:image.png)
+
+
+
+
 
 
 
