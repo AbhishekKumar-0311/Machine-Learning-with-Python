@@ -453,7 +453,7 @@ df15
 df15['isA'] = df15.col_a.str.find('Dallas',start=0, end=6)
 df15
 
-df15['isA1'] = df15.col_a.str.find('allas')
+df15['isA1'] = df15.col_a.str.find('TX')
 df15
 
 df15['isA2'] = df15.col_a.str.rfind('San')
@@ -600,5 +600,36 @@ matches[:][2]
 
 
 
+
+
+
+
+# ## Problem Solving
+
+# +
+# Replacing 2nd word of col_a with 1st word of col_a
+
+dfp = df.copy()
+dfp
+
+dfp['DupA'] = dfp['col_a']
+dfp
+
+x = dfp.col_a.str.split(',').str[0]
+
+def func(row):
+    return row['DupA'].replace(row['DupA'].split(',')[1], row['DupA'].split(',')[0])
+
+
+dfp['DupA'] = dfp.apply(func, axis = 1)
+
+dfp
+
+d2= dfp.apply(func, axis = 1)
+
+d2
+# -
+features['sl_mm2'] = features['sepal length (cm)'].apply(lambda x : x*10)
+features.head()
 
 
