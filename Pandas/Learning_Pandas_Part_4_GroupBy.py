@@ -131,7 +131,7 @@ grouped_1.filter(lambda x: max(x['Salary']) >= 1121000.0)
 # +
 # The argument of filter must be a function that, applied to the group as a whole, returns True or False.
 
-grouped_1.filter(lambda x: len(x['Emp_Id']) >=3)
+grouped_1.filter(lambda x: min(x['Emp_Name'].str.len()) >= 10)
 
 # +
 # The argument of filter must be a function that, applied to the group as a whole, returns True or False.
