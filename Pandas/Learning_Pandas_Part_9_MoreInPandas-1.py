@@ -57,21 +57,30 @@ sample = {
 df_sample = pd.DataFrame(sample)
 df_sample
 
-# # Functions discussed in this Notebook
+# # Functions discussed in this Notebook - Part 1
 
 # |Function	    							|Description																		|Part|
 # |:-|:-|:-|
-# |apply()									|Pad strings in the Series/Index by prepending ‘0’ characters.						|1|
-# |applymap()									|Fills the right side of strings with an arbitrary character. 						|1|
-# |map()										|Fills the left side of strings with an arbitrary character.						|1|
-# |transform()								|Fills the left side of strings with an arbitrary character.						|1|
-# |pipe()										|Fills the left side of strings with an arbitrary character.						|2|
-# |df.assign()								|Fills both sides of strings with an arbitrary character.							|2|
-# |df.update()								|Fills both sides of strings with an arbitrary character.							|2|
-# |df.items									|Check whether characters are all lower case										|3|
-# |df.iteritems								|Check whether characters are all upper case										|3|
-# |df.iterrows								|Check whether characters are all title case										|3|
-# |df.itertuples								|Check whether characters are all lower case										|3|
+# |apply()									|Apply a function along an axis of the DataFrame.									|1|
+# |applymap()									|Apply a function to a Dataframe elementwise. 										|1|
+# |map()										|map() is used to substitute each value in a Series with another value.				|1|
+# |transform()								|Call func on self producing a DataFrame with transformed values.					|1|
+#
+# |Function	    							|Description																		|Part|
+# |:-|:-|:-|
+# |pipe()										|Apply func(self, *args, **kwargs).													|2|
+# |df.assign()								|Assign new columns to a DataFrame.													|2|
+# |df.update()								|Modify in place using non-NA values from another DataFrame.						|2|
+# |df.take									|Return the elements in the given positional indices along an axis.					|2|
+# |df.truncate								|Truncate a Series or DataFrame before and after some index value.					|2|
+#
+# |Function	    							|Description																		|Part|
+# |:-|:-|:-|
+# |df.items									|Iterates over the DataFrame columns, returning a tuple with the column name and the content as a Series.|3|
+# |df.iteritems								|Iterates over the DataFrame columns, returning a tuple with the column name and the content as a Series.|3|
+# |df.iterrows								|Iterate over DataFrame rows as (index, Series) pairs.								|3|
+# |df.itertuples								|Iterate over DataFrame rows as namedtuples.										|3|
+#
 
 # # Apply() , Applymap(), Map()
 
@@ -521,6 +530,128 @@ df.groupby('key').apply(subtract_two)
 
 # Uncommenet to see error
 # df.groupby('key').transform(subtract_two)
+# -
+
+
+
+# # Problem Solving
+
+# +
+# Replacing 2nd word of col_a with 1st word of col_a
+
+dfp = df.copy()
+dfp
+
+dfp['DupA'] = dfp['col_a']
+dfp
+
+x = dfp.col_a.str.split(',').str[0]
+
+def func(row):
+    return row['DupA'].replace(row['DupA'].split(',')[1], row['DupA'].split(',')[0])
+
+
+dfp['DupA'] = dfp.apply(func, axis = 1)
+
+dfp
+
+d2= dfp.apply(func, axis = 1)
+
+d2
+# +
+# Data Setup
+
+df = dfp.copy()
+df
+
+
+# -
+
+# ####  Replacing 2nd word of col_a with 1st word of col_a
+
+# +
+def func(row):
+    return row['col_a'].replace(row['col_a'].split(',')[1],row['col_a'].split(',')[0] )
+
+df['NewColA1'] = df.apply(func, axis=1)
+df
+
+
+# -
+
+# #### Replacing 2nd word of col_a with a constant value '_IN'
+
+# +
+def func(row):
+    return row['col_a'].replace(row['col_a'].split(',')[1],'_IN' )
+
+df['NewColA2'] = df.apply(func, axis=1)
+df
+
+
+# -
+
+# #### Splitting 1st word of col_a to a new column
+
+# +
+def func(row):
+    return row['col_a'].split(',')[0]
+
+df['NewColA3'] = df.apply(func, axis=1)
+df
+
+
+# -
+
+# #### Replacing 2nd word of col_a with a constant value '_IN' but NOT using REPLACE - 
+# - **_instead use SPLIT to extract 1st word and CONCAT with the constant value '_IN'_**
+
+# +
+def func(row):
+    return row['col_a'].split(',')[0] + '_IN'
+
+df['NewColA4'] = df.apply(func, axis=1)
+df
+
+
+# +
+# Tried doing the same thing, but not with '+' operator and passing each row to .apply() by axis=1
+
+def func(row):
+    print(type(row))
+    return "-".join([row['col_a'].split(',')[0],'IN'])
+
+df['NewColA6'] = df.apply(func, axis=1)
+df
+
+
+# It can be clearly seen that each row is passed to the ufunc as a series and is accessible as String ( str )
+# That is why, cat() is not working and have to use .join.
+
+# +
+def func(row):
+    return "-".join([row['col_a'].split(',')[0],row['col_d']])
+
+df['NewColA7'] = df.apply(func, axis=1)
+df
+
+
+# It can be clearly seen that each row is passed to the ufunc as a series and is accessible as String ( str )
+# That is why, cat() is not working and have to use .join.
+
+# +
+# Tried doing the same thing, but not with '+' operator and passing each column to .apply() by axis=0
+
+def func(col):
+    print(type(col))
+    return "-".join([col.split(',')[0], 'IN'])
+
+df['NewColA8'] = df['col_a'].apply(func)
+df
+
+
+# It can be clearly seen that for each row, one column is passed to the ufunc as one cell (str) and is accessible as String ( str )
+# That is why, cat() is not working and have to use .join.
 # -
 
 
