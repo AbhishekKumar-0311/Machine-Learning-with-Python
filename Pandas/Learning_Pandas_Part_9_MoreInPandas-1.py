@@ -61,17 +61,26 @@ df_sample
 
 # |Function	    							|Description																		|Part|
 # |:-|:-|:-|
-# |apply()									|Pad strings in the Series/Index by prepending ‘0’ characters.						|1|
-# |applymap()									|Fills the right side of strings with an arbitrary character. 						|1|
-# |map()										|Fills the left side of strings with an arbitrary character.						|1|
-# |transform()								|Fills the left side of strings with an arbitrary character.						|1|
-# |pipe()										|Fills the left side of strings with an arbitrary character.						|2|
-# |df.assign()								|Fills both sides of strings with an arbitrary character.							|2|
-# |df.update()								|Fills both sides of strings with an arbitrary character.							|2|
-# |df.items									|Check whether characters are all lower case										|3|
-# |df.iteritems								|Check whether characters are all upper case										|3|
-# |df.iterrows								|Check whether characters are all title case										|3|
-# |df.itertuples								|Check whether characters are all lower case										|3|
+# |apply()									|Apply a function along an axis of the DataFrame.									|1|
+# |applymap()									|Apply a function to a Dataframe elementwise. 										|1|
+# |map()										|map() is used to substitute each value in a Series with another value.				|1|
+# |transform()								|Call func on self producing a DataFrame with transformed values.					|1|
+#
+# |Function	    							|Description																		|Part|
+# |:-|:-|:-|
+# |pipe()										|Apply func(self, *args, **kwargs).													|2|
+# |df.assign()								|Assign new columns to a DataFrame.													|2|
+# |df.update()								|Modify in place using non-NA values from another DataFrame.						|2|
+# |df.take									|Return the elements in the given positional indices along an axis.					|2|
+# |df.truncate								|Truncate a Series or DataFrame before and after some index value.					|2|
+#
+# |Function	    							|Description																		|Part|
+# |:-|:-|:-|
+# |df.items									|Iterates over the DataFrame columns, returning a tuple with the column name and the content as a Series.|3|
+# |df.iteritems								|Iterates over the DataFrame columns, returning a tuple with the column name and the content as a Series.|3|
+# |df.iterrows								|Iterate over DataFrame rows as (index, Series) pairs.								|3|
+# |df.itertuples								|Iterate over DataFrame rows as namedtuples.										|3|
+#
 
 # # Apply() , Applymap(), Map()
 
