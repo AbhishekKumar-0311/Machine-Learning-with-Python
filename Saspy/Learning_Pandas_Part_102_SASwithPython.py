@@ -14,6 +14,10 @@
 #     name: python3
 # ---
 
+# ### Prepared by Abhishek Kumar
+# ### https://www.linkedin.com/in/abhishekkumar-0311/
+#
+
 # # SAS with Python - saspy module
 
 # ## Step 0 : Environment Setup
@@ -54,8 +58,8 @@ pd.set_option( "display.max_rows", None)
 import saspy
 sas = saspy.SASsession(java='C:\\Program Files\\Java\\jdk-15.0.1\\bin\\java.exe', iomhost=['odaws01-apse1.oda.sas.com','odaws02-apse1.oda.sas.com'], iomport=8591, encoding='utf-8')
 sas
-# abhi0311sharma0
-# SASthepower2KNOW@
+################################################################################################################# abhi0311sharma0
+####################################################################################################################### SASthepower2KNOW@
 
 
 # ## Step 2 : Run SAS Procedure
@@ -107,10 +111,14 @@ x.head(2)
 # - Creating a dataset in sas
 # - Converting it to Pandas Dataframe using **sd2df**
 
-sas.submitLST("data dict_tables; set sashelp.vtable; run;", method='listonly') # method='listorlog'
-pandasdf2 = sas.sd2df(dict_tables.table)
-type(pandasdf2)
-pandasdf2.head(2)
+# +
+### RUN this code snippet at the end
+
+# sas.submitLST("data dict_tables; set sashelp.vtable; run;", method='listonly') # method='listorlog'
+# pandasdf2 = sas.sd2df(dict_tables.table)
+# type(pandasdf2)
+# pandasdf2.head(2)
+# -
 
 # ### SAS DS to Pandas DF - Method 2
 #
@@ -138,8 +146,6 @@ scp = sas.submitLST(sc, method='listonly')
 dict_table_sql = sas.sd2df(dict_tables.table)
 type(dict_table_sql)
 dict_table_sql.head(2)
-
-
 
 
 
@@ -187,3 +193,5 @@ null_drps
 
 # Checking the info of the remaining columns with NULLs
 heart[nulls.index].info()
+
+
