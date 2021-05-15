@@ -57,7 +57,7 @@ sample = {
 df_sample = pd.DataFrame(sample)
 df_sample
 
-# # Functions discussed in this Notebook
+# # Functions discussed in this Notebook - Part 1
 
 # |Function	    							|Description																		|Part|
 # |:-|:-|:-|
@@ -530,6 +530,128 @@ df.groupby('key').apply(subtract_two)
 
 # Uncommenet to see error
 # df.groupby('key').transform(subtract_two)
+# -
+
+
+
+# # Problem Solving
+
+# +
+# Replacing 2nd word of col_a with 1st word of col_a
+
+dfp = df.copy()
+dfp
+
+dfp['DupA'] = dfp['col_a']
+dfp
+
+x = dfp.col_a.str.split(',').str[0]
+
+def func(row):
+    return row['DupA'].replace(row['DupA'].split(',')[1], row['DupA'].split(',')[0])
+
+
+dfp['DupA'] = dfp.apply(func, axis = 1)
+
+dfp
+
+d2= dfp.apply(func, axis = 1)
+
+d2
+# +
+# Data Setup
+
+df = dfp.copy()
+df
+
+
+# -
+
+# ####  Replacing 2nd word of col_a with 1st word of col_a
+
+# +
+def func(row):
+    return row['col_a'].replace(row['col_a'].split(',')[1],row['col_a'].split(',')[0] )
+
+df['NewColA1'] = df.apply(func, axis=1)
+df
+
+
+# -
+
+# #### Replacing 2nd word of col_a with a constant value '_IN'
+
+# +
+def func(row):
+    return row['col_a'].replace(row['col_a'].split(',')[1],'_IN' )
+
+df['NewColA2'] = df.apply(func, axis=1)
+df
+
+
+# -
+
+# #### Splitting 1st word of col_a to a new column
+
+# +
+def func(row):
+    return row['col_a'].split(',')[0]
+
+df['NewColA3'] = df.apply(func, axis=1)
+df
+
+
+# -
+
+# #### Replacing 2nd word of col_a with a constant value '_IN' but NOT using REPLACE - 
+# - **_instead use SPLIT to extract 1st word and CONCAT with the constant value '_IN'_**
+
+# +
+def func(row):
+    return row['col_a'].split(',')[0] + '_IN'
+
+df['NewColA4'] = df.apply(func, axis=1)
+df
+
+
+# +
+# Tried doing the same thing, but not with '+' operator and passing each row to .apply() by axis=1
+
+def func(row):
+    print(type(row))
+    return "-".join([row['col_a'].split(',')[0],'IN'])
+
+df['NewColA6'] = df.apply(func, axis=1)
+df
+
+
+# It can be clearly seen that each row is passed to the ufunc as a series and is accessible as String ( str )
+# That is why, cat() is not working and have to use .join.
+
+# +
+def func(row):
+    return "-".join([row['col_a'].split(',')[0],row['col_d']])
+
+df['NewColA7'] = df.apply(func, axis=1)
+df
+
+
+# It can be clearly seen that each row is passed to the ufunc as a series and is accessible as String ( str )
+# That is why, cat() is not working and have to use .join.
+
+# +
+# Tried doing the same thing, but not with '+' operator and passing each column to .apply() by axis=0
+
+def func(col):
+    print(type(col))
+    return "-".join([col.split(',')[0], 'IN'])
+
+df['NewColA8'] = df['col_a'].apply(func)
+df
+
+
+# It can be clearly seen that for each row, one column is passed to the ufunc as one cell (str) and is accessible as String ( str )
+# That is why, cat() is not working and have to use .join.
 # -
 
 
