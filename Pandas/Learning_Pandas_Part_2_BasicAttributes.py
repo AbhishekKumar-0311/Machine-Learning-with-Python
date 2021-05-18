@@ -654,4 +654,42 @@ emp_df_4b_3
 #
 # #### .replace( ) is a general replacement function and its usage can be extended in multiple ways.
 
+# ## Replicating COALESCE() of SQL,SAS
+# - COALESCE returns the first non-null value from a list of values.
+# - **FILLNA() can be used to implement this functionality.**
+
+# - **https://stackoverflow.com/questions/43177685/how-to-implement-sql-coalesce-in-pandas/43180501**
+# - **https://stackoverflow.com/questions/38152389/coalesce-values-from-2-columns-into-a-single-column-in-a-pandas-dataframe/38152458**
+# - **https://kanoki.org/2019/08/17/pandas-coalesce-replace-value-from-another-column/**
+
+sample = {
+'col_a':['Houston,TX', np.NaN, 'Chicago,IL', 'Phoenix,AZ',      'San Diego,CA'],
+'col_b':['62K-70K', '71K-78K', '69K-76K', '62K-72K', '71K-78K' ],
+'col_c':['A','XYZ','A','a','c'],
+'col_d':['  1x', np.NaN, np.NaN, '1x', np.NaN]
+}
+df_sample = pd.DataFrame(sample)
+df_sample
+df = df_sample.copy()
+
+# +
+# creating a new column 'coalesce' which takes 1st Non-Null value starting from col_a , col_b, col_c, col_d (left to right)
+
+df['coalesce'] = df.fillna(method='bfill', axis='columns').iloc[:, 0]
+df
+# -
+
+df['LastNonNull'] = np.NaN
+df['LastNonNull'] = df.fillna(method='ffill', axis='columns').iloc[:, 3]
+df
+
+df['FirstNonNull'] = np.NaN
+df['FirstNonNull'] = df.FirstNonNull.fillna(df.col_a).fillna(df.col_b).fillna(df.col_c).fillna(df.col_d)
+df
+
+
+
+df['coalesce2'] = df.col_a.fillna(method='bfill')
+df
+
 

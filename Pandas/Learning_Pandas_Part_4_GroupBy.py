@@ -93,17 +93,34 @@ len(grouped_1)
 #     Filter methods return a subset of the original DataFrame. 
 #     Most common is .filter() to drop entire groups based on some comparative statistic about that group and its sub-table. 
 #     There are a number of methods that exclude particular rows from each group.
+#     
+# - **https://stackoverflow.com/questions/55583246/what-is-different-between-groupby-first-groupby-nth-groupby-head-when-as-index**
 
 grouped_2 = emp_df_1.groupby('Department')
 grouped_2
+
+# ## ```first/last```
+#
+# This will return the **first/last non-null value** within each group. Oddly enough it will not skip None, though this can be made possible with the kwarg dropna=True. As a result, **you may return values for columns that were part of different rows originally:**
 
 grouped_2.first()
 
 grouped_2.last()
 
+# ## ```head(n)/tail(n)```
+# Returns the **top/bottom n rows** within a group. **Values remain bound within rows**. If you give it an n that is more than the number of rows, it returns all rows in that group without complaining:
+
 grouped_2.head(2)
 
 grouped_2.tail(1)
+
+# ## ```nth```
+#
+# - GroupBy.nth(n, dropna=None)[source]
+#     - Take the nth row from each group if n is an int, or a subset of rows if n is a list of ints.
+#     - If dropna, will take the nth non-null row, dropna is either ‘all’ or ‘any’; this is equivalent to calling dropna(how=dropna) before the groupby.
+#
+# This takes the nth row, so again **values remain bound within the row**. ```.nth(0)``` is the same as .head(1), though they have different uses. For instance, if you need the 0th and 2nd row, that's difficult to do with ```.head()```, but easy with ```.nth([0,2])```. Also it's fair easier to write ```.head(10)``` than ```.nth(list(range(10)))).```
 
 # +
 # Take the nth row from each group if n is an int, or a subset of rows if n is a list of ints.
@@ -111,6 +128,15 @@ grouped_2.tail(1)
 grouped_2.nth(2)
 
 grouped_2.nth([0,2])
+# -
+
+# - **```nth``` also supports dropping rows with any null-values, so you can use it to return the first row without any null-values, unlike ```.head()```**
+
+# +
+# grouped_2.nth([0,2], dropna='any')
+# -
+
+# ![image.png](attachment:image.png)
 
 # +
 # we are selecting the 0th and 2nd rows, not rows whose indices equal 0 and 2.
