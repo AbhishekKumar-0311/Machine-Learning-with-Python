@@ -300,14 +300,29 @@ grouped_3b.agg({ 'Salary' : 'mean', 'Role' : 'sum'}).reset_index()
 #     With both aggregation & filter methods, the resulting DataFrame will commonly be smaller in size than the input DF. 
 #     This is not true of a transformation, which transforms individual values themselves but retains d shape of the original DataFrame.
 
-grouped_3c = emp_df_1.groupby(['Department'])
+grouped_3c = emp_df_1.groupby(['Department'],as_index=False)
 grouped_3c.count()
 
+# +
 # Here i have not created a new column
 # But a new column can be created 
+
+# If i would not have created the groupby object with as_index=false, .....
+# ... then passing a column name , here like, Salary would have returned a series output
 emp_df_1
-transformed = grouped_3c.transform(lambda x : x.fillna(x.mean()))
+transformed = grouped_3c['Salary'].transform(lambda x : x.fillna(x.mean()))
 transformed
+
+# +
+# Here i have  created a new column
+
+# If i would not have created the groupby object with as_index=false, .....
+# ... then passing a column name , here like, Salary would have returned a series output
+emp_df_1
+emp_df_1['NANfilledWithMeanSal'] = grouped_3c['Salary'].transform(lambda x : x.fillna(x.mean()))
+emp_df_1
+emp_df_1['MeanSalofthegroup'] = grouped_3c['Salary'].transform(lambda x : x.mean())
+emp_df_1
 
 # +
 # Using transform to get boolean values and then passing this boolean value to the dataframe to get the correct record
@@ -374,12 +389,11 @@ df_long
 # Returns min value for each columns within each group
 
 df_long.groupby('id').min()
-
-# +
-# Returns max value for each columns within each group
-
-df_long.groupby('id').max()
 # -
+
+# Returns max value for each columns within each group
+df_long.groupby('id')['prem'].max().pipe(pd.DataFrame)
+
 
 # ### FIRST and LAST returns the non-null value
 
@@ -550,9 +564,17 @@ emp_df3
 emp_df3.sort_values(['Department','Salary'], ascending=True).groupby('Department')['Salary'].nth(0).to_frame().reset_index()
 # emp_df3
 
+# +
+# This throws error bcoz unique() is not available for DataFrameGroupBy, instaed only for SeriesGroupBy
+# emp_df3.groupby('Department',as_index=False)['Role'].unique()
+
+# So, the output rsult is in form of series... which can be piped to a dataframe
 emp_df3.groupby('Department')['Role'].unique()
+emp_df3.groupby('Department')['Role'].unique().pipe(pd.DataFrame) 
+# -
 
 emp_df3.groupby('Department')['Role'].nunique()
+emp_df3.groupby('Department',as_index=False)['Role'].nunique()
 
 ods = emp_df3.groupby('Department', as_index = False)
 ods['Role'].count()
@@ -563,6 +585,7 @@ emp_df3.groupby('Department')['Role'].describe()
 
 emp_df3.groupby('Department')['Gender'].value_counts()
 
+emp_df3.groupby('Department')['Salary'].nlargest()
 emp_df3.groupby('Department')['Salary'].nlargest()
 
 emp_df3.groupby('Department')['Salary'].nsmallest()
@@ -635,10 +658,15 @@ emp_df3
 emp_df3['MeanFilledPrevSal'] = emp_df3.groupby('Department')['BackwardFilledPrevSal'].transform(lambda x: x.fillna(x.mean()))
 emp_df3
 
+# ## These are the two chaining ways to create a Pandas dataframe out of Series Object
+# - `.pipe(pd.DataFrame)`
+# - `.to_frame()`
+
 # ### References:
 #
 # #### 1. [Pandas Documentation](#https://pandas.pydata.org/pandas-docs/stable/user_guide/groupby.html)
-# #### 2. [Real Python](#https://realpython.com/pandas-groupby/)
-# #### 3. [TDS - Window Functions](#https://towardsdatascience.com/window-functions-in-pandas-eaece0421f7)
+# #### 2. [Reference Documentation](#https://pandas.pydata.org/docs/reference/groupby.html)
+# #### 3. [Real Python](#https://realpython.com/pandas-groupby/)
+# #### 4. [TDS - Window Functions](#https://towardsdatascience.com/window-functions-in-pandas-eaece0421f7)
 
 
