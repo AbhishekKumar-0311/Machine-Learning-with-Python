@@ -45,9 +45,10 @@ run = pd.read_csv('./data/runways.csv')
 airport.shape
 run.shape
 
-
 # df_return = sqldb(airport,'airport',query,conn=, direct_run=)
-def sqldb(sql_query, conn = sql.connect('default.db'), direct_run = 1, df = df, sql_tbl = sql_tbl ):
+defdf = pd.DataFrame()
+sql_tbl = 'defdf'
+def sqldb(sql_query, conn = sql.connect('default.db'), direct_run = 1, df = defdf, sql_tbl = sql_tbl ):
     ''' df -> pandas dataframe
         sql_tbl -> equivalent table in Db
         sql_query -> query to be executed in sql env
@@ -71,11 +72,12 @@ query = 'select * from airport limit 10'
 
 df_return = sqldb(query,conn,direct_run=1)
 df_return
+
+# +
+# # %reset?
 # -
 
-# %reset?
-
-airport.to_sql('airport',conn)
+airport.to_sql('airport',conn, if_exists = 'replace')
 query = 'select * from airport limit 10'
 dfinit = pd.read_sql(query,conn)
 dfinit
