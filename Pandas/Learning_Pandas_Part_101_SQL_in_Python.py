@@ -18,7 +18,7 @@
 # ### https://www.linkedin.com/in/abhishekkumar-0311/
 #
 
-# # Writing SQL query on a dataframe using pandassql
+# # SQLite Python
 
 # +
 # To get multiple outputs in the same cell
@@ -27,36 +27,114 @@ from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "all"
 
 # %matplotlib inline
-
-# +
-# #!pip install pandasql
+# -
 
 import pandas as pd
 import numpy as np
-import pandasql as ps
-from pandasql import sqldf
-import sqlite3
-from sqlite3 import Error
+import sqlite3 as sql
+# conn = sql.connect('default.db')
+import matplotlib.pyplot as plt
 
-df = pd.read_csv('E:\VCS\GitHub\Machine-Learning-with-Python\data\movie.csv')
+# ## Working with SQLite3 db
+# - Import the sqlite3 package
+#     - `import sqlite3 as sql`
+# - Creata a database or connecct to the existing one
+#     - `conn = sql.connect('default.db')`
+#     - this creates a new db if it does not already exist
+# - Now we need to create tables in this database
+#     - create a table by providing a schema and ddl
+#     - Export an existing dataframe to create a table in the database. This newly created table can be used for querying
+#     - `existing_df.to_sql('dftosql',conn)`
+# - Queryin the above created sql table
+#     - `query = 'select * from dftosql`
+#     - `dfinit = pd.read_sql(sql_query,conn)`
+#     - The dataframe dfinit will have the query result
 
-df.head()
+airport = pd.read_csv('./data/airports.csv')
+run = pd.read_csv('./data/runways.csv')
+
+airport.shape
+run.shape
+
 
 # +
-# #%%timeit
-pysqldf = lambda q: sqldf(q, globals())
+# Demonstration of SQL connect and querying though python
 
-q1 = "Select * from df where director_name = 'James Cameron'"
-pysqldf(q1)
+def cleanup(table):
+    cursor = conn.cursor()
+    cursor.execute('DROP TABLE IF EXISTS '+ table )
+    return
 
-q2 = "Select director_name , sum(num_critic_for_reviews) as tot_critic from df group by director_name order by tot_critic desc"
-pysqldf(q2)#.sort_values(by=)
-pysqldf(q2).sort_values(by='tot_critic', ascending=True)
+# sample test before creating a function
+conn = sql.connect('default.db')
+# airport.to_sql('airport',conn)
+
+# Incase you are Re-creating the table, the above codeline would fail.
+# In such scenarios, call the cleanup function.
+
+cleanup('airport')
+airport.to_sql('airport',conn)
 # -
 
-# ### https://www.kdnuggets.com/2017/02/python-speak-sql-pandasql.html
+# ### Extension - with user defined function
 
-# # SQLite Python
+# df_return = sqldb(airport,'airport',query,conn=, direct_run=)
+defdf = pd.DataFrame()
+sql_tbl = 'defdf'
+def sqldb(sql_query, conn = sql.connect('default.db'), direct_run = 1, df = defdf, sql_tbl = sql_tbl ):
+    ''' df -> pandas dataframe
+        sql_tbl -> equivalent table in Db
+        sql_query -> query to be executed in sql env
+        conn -> connection to database: deafult db is set to default.db
+        direct_run -> indicates whether the query needs to be executed on existing table or needs to be re-created '''
+    if direct_run == 0:
+        cursor = conn.cursor()
+        drop_query = "DROP TABLE IF EXISTS " + sql_tbl
+        cursor.execute(drop_query)
+        df.to_sql(sql_tbl,conn)
+    dfinit = pd.read_sql(sql_query,conn)
+    return dfinit
+
+
+# +
+conn = sql.connect('default.db')
+direct_run = 1
+# df_arg = airport
+# sql_tbl = 'airport'
+query = 'select * from airport limit 10'
+
+df_return = sqldb(query,conn,direct_run=1)
+df_return
+# -
+
+# ### SQLAlchemy
+# #### https://towardsdatascience.com/heres-how-to-run-sql-in-jupyter-notebooks-f26eb90f3259
+
+import sqlalchemy
+
+sqlalchemy.create_engine('sqlite:///default.db')
+
+# +
+# # !pip install ipython-sql
+# -
+
+# %load_ext sql
+
+# %sql sqlite:///default.db
+
+res = %sql select * from airport limit 5
+res
+
+type(res)
+
+dfagn = res.DataFrame()
+dfagn
+
+
+
+
+
+
 
 # ### https://datatofish.com/create-database-python-using-sqlite3/#:~:text=Import%20the%20CSV%20files%20using,file%20using%20the%20to_csv%20command
 
@@ -83,14 +161,6 @@ conn.commit()
 # Note that the syntax to create new tables should only be used once in the code (unless you dropped the table/s at the end of the code). 
 # The [generated_id] column is used to set an auto-increment ID for each record
 # When creating a new table, you can add both the field names as well as the field formats (e.g., Text)
-# -
-
-
-
-
-
-
-
 # +
 import sqlite3
 import pandas as pd
@@ -192,77 +262,45 @@ if __name__ == '__main__':
 
 
 
-
+# # Writing SQL query on a dataframe using pandassql
 
 # +
-import pymysql
+# To get multiple outputs in the same cell
+
+from IPython.core.interactiveshell import InteractiveShell
+InteractiveShell.ast_node_interactivity = "all"
+
+# %matplotlib inline
+
+# +
+# #!pip install pandasql
+
 import pandas as pd
+import numpy as np
+import pandasql as ps
+from pandasql import sqldf
+import sqlite3
+from sqlite3 import Error
 
-# Create dataframe
-data = pd.DataFrame({
-    'Capital':["Kolkata", "Hyderabad", "Bengaluru"],
-    'Founded':['1596', '1561', '1537'],
-    'Address':['WB','TS','KA']
-})
+df = pd.read_csv('E:\VCS\GitHub\Machine-Learning-with-Python\data\movie.csv')
 
+df.head()
 
-# Connect to the database
-connection = pymysql.connect(host='localhost',
-                         user='root',
-                         password='',
-                         db='mydb')
+# +
+# #%%timeit
+pysqldf = lambda q: sqldf(q, globals())
 
+q1 = "Select * from df where director_name = 'James Cameron'"
+pysqldf(q1)
 
-# create cursor
-cursor=connection.cursor()
-
-# creating column list for insertion
-cols = "`,`".join([str(i) for i in data.columns.tolist()])
-
-# Insert DataFrame recrds one by one.
-for i,row in data.iterrows():
-    sql = "INSERT INTO `city` (`" +cols + "`) VALUES (" + "%s,"*(len(row)-1) + "%s)"
-    cursor.execute(sql, tuple(row))
-
-    # the connection is not autocommitted by default, so we must commit to save our changes
-    connection.commit()
-
-# Execute query
-sql = "SELECT * FROM `city`"
-cursor.execute(sql)
-
-# Fetch all the records
-result = cursor.fetchall()
-for i in result:
-    print(i)
-
-connection.close()
-
- 
-
-# Note :-
-
-# My table description
-
-# describe city;
-
-# # +---------+--------------+------+-----+---------+----------------+
-
-# | Field   | Type         | Null | Key | Default | Extra          |
-
-# # +---------+--------------+------+-----+---------+----------------+
-
-# | ID      | int          | NO   | PRI | NULL    | auto_increment |
-
-# | Capital | varchar(255) | YES  |     | NULL    |                |
-
-# | Founded | varchar(255) | YES  |     | NULL    |                |
-
-# | Address | varchar(255) | YES  |     | NULL    |                |
-
-# # +---------+--------------+------+-----+---------+----------------+
-
-
+q2 = "Select director_name , sum(num_critic_for_reviews) as tot_critic from df group by director_name order by tot_critic desc"
+pysqldf(q2)#.sort_values(by=)
+pysqldf(q2).sort_values(by='tot_critic', ascending=True)
 # -
+
+# ### https://www.kdnuggets.com/2017/02/python-speak-sql-pandasql.html
+
+
+
 
 
