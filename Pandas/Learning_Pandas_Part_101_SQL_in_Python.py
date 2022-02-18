@@ -56,6 +56,28 @@ run = pd.read_csv('./data/runways.csv')
 airport.shape
 run.shape
 
+
+# +
+# Demonstration of SQL connect and querying though python
+
+def cleanup(table):
+    cursor = conn.cursor()
+    cursor.execute('DROP TABLE IF EXISTS '+ table )
+    return
+
+# sample test before creating a function
+conn = sql.connect('default.db')
+# airport.to_sql('airport',conn)
+
+# Incase you are Re-creating the table, the above codeline would fail.
+# In such scenarios, call the cleanup function.
+
+cleanup('airport')
+airport.to_sql('airport',conn)
+# -
+
+# ### Extension - with user defined function
+
 # df_return = sqldb(airport,'airport',query,conn=, direct_run=)
 defdf = pd.DataFrame()
 sql_tbl = 'defdf'
